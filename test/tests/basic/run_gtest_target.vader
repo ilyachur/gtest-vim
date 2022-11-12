@@ -56,5 +56,74 @@ Execute ([Run GTest Target] Run gtest executable):
     endif
     silent GTest
     silent copen
-    Assert w:quickfix_title =~# '--target unit_tests', 'Assert ' . w:quickfix_title
+    Assert w:quickfix_title =~# 'unit_tests', 'Assert ' . w:quickfix_title
+    silent cclose
+
+Execute ([Run GTest Target] Run gtest executable with filter):
+    CMake -DENABLE_TESTS=ON
+    Assert filereadable("cmake-build-Release/CMakeCache.txt"), "CMakeCache.txt should be generated"
+    silent CMakeBuild unit_tests
+    if !has('win32')
+        Assert filereadable("cmake-build-Release/tests/unit_tests"), "unit_tests should be built"
+        Assert filereadable("cmake-build-Release/lib/libtest_lib.a"), "test_lib should be built"
+    else
+        Assert filereadable("cmake-build-Release/tests/Debug/unit_tests.exe"), "unit_tests should be built"
+        Assert filereadable("cmake-build-Release/lib/Debug/test_lib.lib"), "test_lib should be built"
+    endif
+    let g:gtest_test_filter = '*TestMethodF1'
+    silent GTest
+    silent copen
+    Assert w:quickfix_title =~# '--gtest_filter=\*TestMethodF1', 'Assert ' . w:quickfix_title
+    silent cclose
+
+Execute ([Run GTest Target] Run gtest executable with filter from cmd):
+    CMake -DENABLE_TESTS=ON
+    Assert filereadable("cmake-build-Release/CMakeCache.txt"), "CMakeCache.txt should be generated"
+    silent CMakeBuild unit_tests
+    if !has('win32')
+        Assert filereadable("cmake-build-Release/tests/unit_tests"), "unit_tests should be built"
+        Assert filereadable("cmake-build-Release/lib/libtest_lib.a"), "test_lib should be built"
+    else
+        Assert filereadable("cmake-build-Release/tests/Debug/unit_tests.exe"), "unit_tests should be built"
+        Assert filereadable("cmake-build-Release/lib/Debug/test_lib.lib"), "test_lib should be built"
+    endif
+    silent GTest --gtest_filter=*TestMethodF2
+    silent copen
+    Assert w:quickfix_title =~# '--gtest_filter=\*TestMethodF2', 'Assert ' . w:quickfix_title
+    silent cclose
+
+Execute ([Run GTest Target] Run gtest executable with filter and filter from cmd):
+    CMake -DENABLE_TESTS=ON
+    Assert filereadable("cmake-build-Release/CMakeCache.txt"), "CMakeCache.txt should be generated"
+    silent CMakeBuild unit_tests
+    if !has('win32')
+        Assert filereadable("cmake-build-Release/tests/unit_tests"), "unit_tests should be built"
+        Assert filereadable("cmake-build-Release/lib/libtest_lib.a"), "test_lib should be built"
+    else
+        Assert filereadable("cmake-build-Release/tests/Debug/unit_tests.exe"), "unit_tests should be built"
+        Assert filereadable("cmake-build-Release/lib/Debug/test_lib.lib"), "test_lib should be built"
+    endif
+    let g:gtest_test_filter = '*TestMethodF1'
+    silent GTest --gtest_filter=*TestMethodF2
+    silent copen
+    Assert w:quickfix_title =~# '--gtest_filter=\*TestMethodF1', 'Assert ' . w:quickfix_title
+    Assert w:quickfix_title =~# '--gtest_filter=\*TestMethodF2', 'Assert ' . w:quickfix_title
+    silent cclose
+
+Execute ([Run GTest Target] Run gtest executable with bang filter from cmd):
+    CMake -DENABLE_TESTS=ON
+    Assert filereadable("cmake-build-Release/CMakeCache.txt"), "CMakeCache.txt should be generated"
+    silent CMakeBuild unit_tests
+    if !has('win32')
+        Assert filereadable("cmake-build-Release/tests/unit_tests"), "unit_tests should be built"
+        Assert filereadable("cmake-build-Release/lib/libtest_lib.a"), "test_lib should be built"
+    else
+        Assert filereadable("cmake-build-Release/tests/Debug/unit_tests.exe"), "unit_tests should be built"
+        Assert filereadable("cmake-build-Release/lib/Debug/test_lib.lib"), "test_lib should be built"
+    endif
+    let g:gtest_test_filter = '*TestMethodF1'
+    silent GTest! --gtest_filter=*TestMethodF2
+    silent copen
+    Assert w:quickfix_title !~# '--gtest_filter=\*TestMethodF1', 'Assert ' . w:quickfix_title
+    Assert w:quickfix_title =~# '--gtest_filter=\*TestMethodF2', 'Assert ' . w:quickfix_title
     silent cclose
