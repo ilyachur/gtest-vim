@@ -1,0 +1,47 @@
+Before:
+    silent call OpenTestProject()
+    silent call ResetPluginOptions()
+    " Use on in order to close all windows and avoid E36 error
+    silent on
+
+
+Execute ([Run Under Cursor GTest Target] Run gtest executable without cmake target):
+    CMake -DENABLE_TESTS=ON
+    Assert filereadable("cmake-build-Release/CMakeCache.txt"), "CMakeCache.txt should be generated"
+    silent CMakeBuild
+    " Windows is disabled now
+    if !has('win32')
+        Assert filereadable("cmake-build-Release/app/test_app"), "app should be built"
+        Assert filereadable("cmake-build-Release/tests/unit_tests"), "unit_tests should be built"
+        Assert filereadable("cmake-build-Release/lib/libtest_lib.a"), "test_lib should be built"
+        let g:gtest_executable = 'cmake-build-Release/tests/unit_tests'
+    else
+        Assert filereadable("cmake-build-Release/app/Debug/test_app.exe"), "app should be built"
+        Assert filereadable("cmake-build-Release/tests/Debug/unit_tests.exe"), "unit_tests should be built"
+        Assert filereadable("cmake-build-Release/lib/Debug/test_lib.lib"), "test_lib should be built"
+        let g:gtest_executable = 'cmake-build-Release/tests/Debug/unit_tests.exe'
+    endif
+    :e tests/src/test_class.cpp
+    :8
+    silent GTestRunThis
+    silent copen
+    Assert w:quickfix_title =~# '--gtest_filter=TestClassTests.TestMethodF1', 'Assert ' . w:quickfix_title
+    silent cclose
+
+Execute ([Run Under Cursor GTest Target] Run gtest executable):
+    CMake -DENABLE_TESTS=ON
+    Assert filereadable("cmake-build-Release/CMakeCache.txt"), "CMakeCache.txt should be generated"
+    silent CMakeBuild unit_tests
+    if !has('win32')
+        Assert filereadable("cmake-build-Release/tests/unit_tests"), "unit_tests should be built"
+        Assert filereadable("cmake-build-Release/lib/libtest_lib.a"), "test_lib should be built"
+    else
+        Assert filereadable("cmake-build-Release/tests/Debug/unit_tests.exe"), "unit_tests should be built"
+        Assert filereadable("cmake-build-Release/lib/Debug/test_lib.lib"), "test_lib should be built"
+    endif
+    :e tests/src/test_class.cpp
+    :14
+    silent GTestRunThis
+    silent copen
+    Assert w:quickfix_title =~# '--gtest_filter=TestClassTests.TestMethodF2', 'Assert ' . w:quickfix_title
+    silent cclose

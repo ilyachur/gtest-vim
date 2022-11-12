@@ -1,0 +1,139 @@
+Execute ([GTEST Pattern] int main):
+    let line_example = "int main()"
+    let has_gtest = utils#gtest#hasGTestInLine(line_example)
+    AssertEqual has_gtest, 0
+    let gtest_filter = utils#gtest#getGTestFilterFromLine(line_example)
+    AssertEqual gtest_filter, ""
+
+Execute ([GTEST Pattern] TEST AA):
+    let line_example = "TEST(AA)"
+    let has_gtest = utils#gtest#hasGTestInLine(line_example)
+    AssertEqual has_gtest, 0
+    let gtest_filter = utils#gtest#getGTestFilterFromLine(line_example)
+    AssertEqual gtest_filter, ""
+
+Execute ([GTEST Pattern] TEST AA BB):
+    let line_example = "TEST(AA, BB)"
+    let has_gtest = utils#gtest#hasGTestInLine(line_example)
+    AssertEqual has_gtest, 1
+    let gtest_filter = utils#gtest#getGTestFilterFromLine(line_example)
+    AssertEqual gtest_filter, "AA.BB"
+
+Execute ([GTEST Pattern] TEST AA BB 1):
+    let line_example = "TEST  (AA, BB)"
+    let has_gtest = utils#gtest#hasGTestInLine(line_example)
+    AssertEqual has_gtest, 1
+    let gtest_filter = utils#gtest#getGTestFilterFromLine(line_example)
+    AssertEqual gtest_filter, "AA.BB"
+
+Execute ([GTEST Pattern] TEST AA BB 2):
+    let line_example = "TEST(   AA, BB   )"
+    let has_gtest = utils#gtest#hasGTestInLine(line_example)
+    AssertEqual has_gtest, 1
+    let gtest_filter = utils#gtest#getGTestFilterFromLine(line_example)
+    AssertEqual gtest_filter, "AA.BB"
+
+Execute ([GTEST Pattern] TEST AA BB 3):
+    let line_example = "TEST(AA   ,    BB)   {"
+    let has_gtest = utils#gtest#hasGTestInLine(line_example)
+    AssertEqual has_gtest, 1
+    let gtest_filter = utils#gtest#getGTestFilterFromLine(line_example)
+    AssertEqual gtest_filter, "AA.BB"
+
+Execute ([GTEST Pattern] TEST AA BB 4):
+    let line_example = "    TEST(AA, BB);"
+    let has_gtest = utils#gtest#hasGTestInLine(line_example)
+    AssertEqual has_gtest, 1
+    let gtest_filter = utils#gtest#getGTestFilterFromLine(line_example)
+    AssertEqual gtest_filter, "AA.BB"
+
+" Execute ([GTEST Pattern] TEST AA BB 5):
+"     let line_example = "TEST\n(\nAA\n   , BB\n)"
+"     let has_gtest = utils#gtest#hasGTestInLine(line_example)
+"     AssertEqual has_gtest, 1
+"     let gtest_filter = utils#gtest#getGTestFilterFromLine(line_example)
+"     AssertEqual gtest_filter, "AA.BB"
+"
+" Execute ([GTEST Pattern] TEST AA BB 6):
+"     let line_example = "TEST\n(\nAA,\n    BB\n)"
+"     let has_gtest = utils#gtest#hasGTestInLine(line_example)
+"     AssertEqual has_gtest, 1
+"     let gtest_filter = utils#gtest#getGTestFilterFromLine(line_example)
+"     AssertEqual gtest_filter, "AA.BB"
+
+Execute ([GTEST Pattern] TEST_F AA BB):
+    let line_example = "TEST_F(AA, BB)"
+    let has_gtest = utils#gtest#hasGTestInLine(line_example)
+    AssertEqual has_gtest, 1
+    let gtest_filter = utils#gtest#getGTestFilterFromLine(line_example)
+    AssertEqual gtest_filter, "AA.BB"
+
+Execute ([GTEST Pattern] TEST_P AA BB):
+    let line_example = "TEST_P(AA, BB)"
+    let has_gtest = utils#gtest#hasGTestInLine(line_example)
+    AssertEqual has_gtest, 1
+    let gtest_filter = utils#gtest#getGTestFilterFromLine(line_example)
+    AssertEqual gtest_filter, "*AA.BB*"
+
+Execute ([GTEST Pattern] INSTANTIATE_TEST_SUITE_P AA BB):
+    let line_example = "INSTANTIATE_TEST_SUITE_P(AA, BB, ss)"
+    let has_gtest = utils#gtest#hasGTestInLine(line_example)
+    AssertEqual has_gtest, 1
+    let gtest_filter = utils#gtest#getGTestFilterFromLine(line_example)
+    AssertEqual gtest_filter, "*AA.BB*"
+
+Execute ([GTEST Pattern] INSTANTIATE_TEST_SUITE_P AA BB 1):
+    let line_example = "INSTANTIATE_TEST_SUITE_P(AA, BB, ss, pp)"
+    let has_gtest = utils#gtest#hasGTestInLine(line_example)
+    AssertEqual has_gtest, 1
+    let gtest_filter = utils#gtest#getGTestFilterFromLine(line_example)
+    AssertEqual gtest_filter, "*AA.BB*"
+
+" Execute ([GTEST Pattern] INSTANTIATE_TEST_SUITE_P AA BB 2):
+"     let line_example = "INSTANTIATE_TEST_SUITE_P(\nAA, BB, ss, pp)"
+"     let has_gtest = utils#gtest#hasGTestInLine(line_example)
+"     AssertEqual has_gtest, 1
+"     let gtest_filter = utils#gtest#getGTestFilterFromLine(line_example)
+"     AssertEqual gtest_filter, "*AA.BB*"
+
+Execute ([GTEST Pattern] TYPED_TEST_SUITE AA BB):
+    let line_example = "TYPED_TEST_SUITE(AA, ::testing::Types<char, int, unsigned int>)"
+    let has_gtest = utils#gtest#hasGTestInLine(line_example)
+    AssertEqual has_gtest, 1
+    let gtest_filter = utils#gtest#getGTestFilterFromLine(line_example)
+    AssertEqual gtest_filter, "*AA.*"
+
+Execute ([GTEST Pattern] TYPED_TEST AA BB):
+    let line_example = "TYPED_TEST(AA, BB)"
+    let has_gtest = utils#gtest#hasGTestInLine(line_example)
+    AssertEqual has_gtest, 1
+    let gtest_filter = utils#gtest#getGTestFilterFromLine(line_example)
+    AssertEqual gtest_filter, "AA.BB"
+
+Execute ([GTEST Pattern] TYPED_TEST_SUITE_P AA):
+    let line_example = "TYPED_TEST_SUITE(AA)"
+    let has_gtest = utils#gtest#hasGTestInLine(line_example)
+    AssertEqual has_gtest, 1
+    let gtest_filter = utils#gtest#getGTestFilterFromLine(line_example)
+    AssertEqual gtest_filter, "*AA.*"
+
+Execute ([GTEST Pattern] TYPED_TEST_P AA BB):
+    let line_example = "TYPED_TEST_P(AA, BB)"
+    let has_gtest = utils#gtest#hasGTestInLine(line_example)
+    AssertEqual has_gtest, 1
+    let gtest_filter = utils#gtest#getGTestFilterFromLine(line_example)
+    AssertEqual gtest_filter, "*AA.BB*"
+
+Execute ([GTEST Pattern] FRIEND_TEST AA BB):
+    let line_example = "FRIEND_TEST(AA, BB)"
+    let has_gtest = utils#gtest#hasGTestInLine(line_example)
+    AssertEqual has_gtest, 1
+    let gtest_filter = utils#gtest#getGTestFilterFromLine(line_example)
+    AssertEqual gtest_filter, "AA.BB"
+
+Execute ([GTEST Pattern] INSTANTIATE_TYPED_TEST_SUITE_P AA BB):
+    let line_example = "INSTANTIATE_TYPED_TEST_SUITE_P(AA, BB, ss)"
+    let has_gtest = utils#gtest#hasGTestInLine(line_example)
+    AssertEqual has_gtest, 1
+    let gtest_filter = utils#gtest#getGTestFilterFromLine(line_example)
+    AssertEqual gtest_filter, "*AA.BB*"
