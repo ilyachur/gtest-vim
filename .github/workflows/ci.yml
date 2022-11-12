@@ -50,8 +50,8 @@ jobs:
             os: 'ubuntu-latest'
           - platform: 'MacOS'
             os: 'macos-latest'
-          - platform: 'Windows'
-            os: 'windows-latest'
+          # - platform: 'Windows'
+          #   os: 'windows-latest'
           - vim_type: 'Vim'
             nvim: false
             vim_executable: vim
