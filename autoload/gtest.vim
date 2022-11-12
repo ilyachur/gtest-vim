@@ -4,7 +4,7 @@
 " Public functions {{{ "
 function! gtest#Run(bang, ...) abort
     let l:args = []
-    if !empty(g:gtest_test_filter)
+    if !a:bang && !empty(g:gtest_test_filter)
         let l:args += [printf('--gtest_filter=%s', g:gtest_test_filter)]
     endif
     if !empty(g:cmake_build_target)

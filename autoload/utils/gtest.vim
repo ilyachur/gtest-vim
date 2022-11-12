@@ -3,6 +3,6 @@
 
 " Detect GTest executable
 function! utils#gtest#isGTestExecutable(exec_path) abort
-    let l:help_out = system(a:exec_path . ' --help')
+    let l:help_out = system(utils#fs#fnameescape(a:exec_path) . ' --help')
     return !empty(matchstr(l:help_out, 'This program contains tests written using Google Test'))
 endfunction
