@@ -1,0 +1,59 @@
+Before:
+    silent call OpenTestProject()
+    silent call ResetPluginOptions()
+    " Use on in order to close all windows and avoid E36 error
+    silent on
+
+Execute ([Run GTest Target] Detect gtest executable):
+    CMake -DENABLE_TESTS=ON
+    Assert filereadable("cmake-build-Release/CMakeCache.txt"), "CMakeCache.txt should be generated"
+    silent CMakeBuild
+    if !has('win32')
+        Assert filereadable("cmake-build-Release/app/test_app"), "app should be built"
+        Assert filereadable("cmake-build-Release/tests/unit_tests"), "unit_tests should be built"
+        Assert filereadable("cmake-build-Release/lib/libtest_lib.a"), "test_lib should be built"
+        Assert !utils#gtest#isGTestExecutable("cmake-build-Release/app/test_app"), "test_app cannot be gtest executable"
+        Assert utils#gtest#isGTestExecutable("cmake-build-Release/tests/unit_tests"), "unit_tests must be gtest executable"
+    else
+        Assert filereadable("cmake-build-Release/app/Debug/test_app.exe"), "app should be built"
+        Assert filereadable("cmake-build-Release/tests/Debug/unit_tests.exe"), "unit_tests should be built"
+        Assert filereadable("cmake-build-Release/lib/Debug/test_lib.lib"), "test_lib should be built"
+        Assert !utils#gtest#isGTestExecutable("cmake-build-Release/app/Debug/test_app.exe"), "test_app cannot be gtest executable"
+        Assert utils#gtest#isGTestExecutable("cmake-build-Release/app/Debug/unit_tests.exe"), "unit_tests must be gtest executable"
+    endif
+
+Execute ([Run GTest Target] Run gtest executable without cmake target):
+    CMake -DENABLE_TESTS=ON
+    Assert filereadable("cmake-build-Release/CMakeCache.txt"), "CMakeCache.txt should be generated"
+    silent CMakeBuild
+    if !has('win32')
+        Assert filereadable("cmake-build-Release/app/test_app"), "app should be built"
+        Assert filereadable("cmake-build-Release/tests/unit_tests"), "unit_tests should be built"
+        Assert filereadable("cmake-build-Release/lib/libtest_lib.a"), "test_lib should be built"
+        let g:gtest_executable = 'cmake-build-Release/tests/unit_tests'
+    else
+        Assert filereadable("cmake-build-Release/app/Debug/test_app.exe"), "app should be built"
+        Assert filereadable("cmake-build-Release/tests/Debug/unit_tests.exe"), "unit_tests should be built"
+        Assert filereadable("cmake-build-Release/lib/Debug/test_lib.lib"), "test_lib should be built"
+        let g:gtest_executable = 'cmake-build-Release/tests/Debug/unit_tests.exe'
+    endif
+    silent GTest
+    silent copen
+    Assert w:quickfix_title =~# 'unit_tests', 'Assert ' . w:quickfix_title
+    silent cclose
+
+Execute ([Run GTest Target] Run gtest executable):
+    CMake -DENABLE_TESTS=ON
+    Assert filereadable("cmake-build-Release/CMakeCache.txt"), "CMakeCache.txt should be generated"
+    silent CMakeBuild unit_tests
+    if !has('win32')
+        Assert filereadable("cmake-build-Release/tests/unit_tests"), "unit_tests should be built"
+        Assert filereadable("cmake-build-Release/lib/libtest_lib.a"), "test_lib should be built"
+    else
+        Assert filereadable("cmake-build-Release/tests/Debug/unit_tests.exe"), "unit_tests should be built"
+        Assert filereadable("cmake-build-Release/lib/Debug/test_lib.lib"), "test_lib should be built"
+    endif
+    silent GTest
+    silent copen
+    Assert w:quickfix_title =~# '--target unit_tests', 'Assert ' . w:quickfix_title
+    silent cclose

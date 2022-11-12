@@ -1,0 +1,90 @@
+" Helpers {{{
+function! RemoveFile(file)
+    if empty(a:file) || !filewritable(fnameescape(a:file))
+        return
+    endif
+    if has('win32')
+        silent echo system("del /F /Q \"".a:file."\" >nul 2>&1")
+    else
+        silent echo system("rm -rf '".a:file."'")
+    endif
+endfunction
+
+function! RemoveDirectory(folder)
+    if empty(a:folder) || !filewritable(fnameescape(a:folder))
+        return
+    endif
+    if has('win32')
+        silent echo system(printf('rd /S /Q "%s" >nul 2>&1', a:folder))
+    else
+        silent echo system(printf('rm -rf "%s"', a:folder))
+    endif
+endfunction
+
+function! RemoveCMakeDirs()
+    for l:value in ['cmake-build-Release', 'cmake-build-Debug', 'cmake-build-RelWithDebInfo', 'cmake-build-MinSizeRel', 'cmake-build']
+        silent call RemoveDirectory(l:value)
+    endfor
+endfunction
+
+function! OpenTestProject()
+    let s:path = fnameescape(s:cur_path . '/tmp/.vim/plugged/cmake4vim/test/cmake projects/test proj')
+    execute 'cd ' . s:path
+endfunction
+
+function! ResetPluginOptions()
+    let g:gtest_test_filter = ''
+    let g:gtest_executable = ''
+
+    let g:cmake_build_target = ''
+    let g:cmake_vimspector_support = 0
+    let g:cmake_vimspector_support = 0
+
+    let g:cmake_build_executor = 'system'
+endfunction
+
+function! WaitForJob() abort
+    let max_wait = 20
+    while 1
+        let l:job = utils#common#executeStatus()
+        if empty(l:job)
+            break
+        endif
+        let max_wait -= 1
+        if max_wait == 0
+            call utils#exec#job#stop()
+            throw 'Job did not finish: ' . string(l:job)
+        endif
+        1sleep
+    endwhile
+endfunction
+
+function! HasQF()
+    for winnr in range(1, winnr('$'))
+        if getwinvar(winnr, '&syntax') == 'qf'
+            return 1
+        endif
+    endfor
+    return 0
+endfunction
+" }}} Helpers
+" Needed for a code coverage
+let s:profile_out = $VIM_PROFILE_FILE
+if has('profile') && !empty(s:profile_out)
+    profile start $VIM_PROFILE_FILE
+    profile! file ../*
+endif
+
+execute 'set encoding=utf-8'
+" vint: next-line -ProhibitSetNoCompatible
+set nocompatible
+filetype off
+filetype plugin indent on
+syntax enable
+set runtimepath +=$HOME/.vim/plugged/vader.vim
+set runtimepath +=$HOME/.vim/plugged/cmake4vim
+let s:cur_path=expand('%:p:h')
+exe 'set runtimepath +=' . fnameescape(expand('<sfile>:h').'/../')
+
+set winminheight=0
+set winheight=999
