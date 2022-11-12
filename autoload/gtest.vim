@@ -23,7 +23,7 @@ function! s:getListTests() abort
         return ''
     endif
     " Get list tests and remove the first line
-    return substitute(system(utils#fs#fnameescape(l:gtest_executable) . " --gtest_list_tests"), '\v^Running.{-}\n(.*)', '\1', '')
+    return substitute(system(utils#fs#fnameescape(l:gtest_executable) . ' --gtest_list_tests'), '\v^Running.{-}\n(.*)', '\1', '')
 endfunction
 " }}} Private functions "
 
@@ -64,7 +64,7 @@ function! gtest#GetAllTests() abort
         if l:test_line[0] !=# ' '
             let l:test_case = l:test_line
             " Allow to run all test cases for suite
-            call add(l:result_list, l:test_case . "*")
+            call add(l:result_list, l:test_case . '*')
         else
             " Combine test case and test suite
             call add(l:result_list, substitute(l:test_line, '\v^\s*', l:test_case, ''))

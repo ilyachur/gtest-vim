@@ -7,15 +7,13 @@ Before:
 Execute ([Get tests list] Get all tests):
     CMake -DENABLE_TESTS=ON
     Assert filereadable("cmake-build-Release/CMakeCache.txt"), "CMakeCache.txt should be generated"
-    silent CMakeBuild unit_tests
+    silent CMakeBuild
     " Windows is disabled now
     if !has('win32')
-        Assert filereadable("cmake-build-Release/app/test_app"), "app should be built"
         Assert filereadable("cmake-build-Release/tests/unit_tests"), "unit_tests should be built"
         Assert filereadable("cmake-build-Release/lib/libtest_lib.a"), "test_lib should be built"
         let g:gtest_executable = 'cmake-build-Release/tests/unit_tests'
     else
-        Assert filereadable("cmake-build-Release/app/Debug/test_app.exe"), "app should be built"
         Assert filereadable("cmake-build-Release/tests/Debug/unit_tests.exe"), "unit_tests should be built"
         Assert filereadable("cmake-build-Release/lib/Debug/test_lib.lib"), "test_lib should be built"
         let g:gtest_executable = 'cmake-build-Release/tests/Debug/unit_tests.exe'
@@ -29,15 +27,11 @@ Execute ([Get tests list] Complete tests):
     silent CMakeBuild unit_tests
     " Windows is disabled now
     if !has('win32')
-        Assert filereadable("cmake-build-Release/app/test_app"), "app should be built"
         Assert filereadable("cmake-build-Release/tests/unit_tests"), "unit_tests should be built"
         Assert filereadable("cmake-build-Release/lib/libtest_lib.a"), "test_lib should be built"
-        let g:gtest_executable = 'cmake-build-Release/tests/unit_tests'
     else
-        Assert filereadable("cmake-build-Release/app/Debug/test_app.exe"), "app should be built"
         Assert filereadable("cmake-build-Release/tests/Debug/unit_tests.exe"), "unit_tests should be built"
         Assert filereadable("cmake-build-Release/lib/Debug/test_lib.lib"), "test_lib should be built"
-        let g:gtest_executable = 'cmake-build-Release/tests/Debug/unit_tests.exe'
     endif
     let test_cases = split(gtest#CompleteTestFilter(0, 0, 0), "\n")
     AssertEqual len(test_cases), 4
