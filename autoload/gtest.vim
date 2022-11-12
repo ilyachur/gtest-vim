@@ -57,6 +57,19 @@ function! gtest#Run(bang, ...) abort
     endif
 endfunction
 
+" Run GTest under cursor
+function! gtest#RunThis() abort
+    if !utils#gtest#hasGTestInLine(getline('.'))
+        call utils#gtest#findPreviousGTestDeclaration()
+    endif
+    let l:gtest_filter = utils#gtest#getGTestFilterFromLine(getline('.'))
+    if !empty(l:gtest_filter)
+        let g:gtest_test_filter = l:gtest_filter
+        call gtest#Run(0)
+    endif
+endfunction
+
+" Returns all tests
 function! gtest#GetAllTests() abort
     let l:list_tests = split(s:getListTests(), '\n')
     let l:result_list = ['*']

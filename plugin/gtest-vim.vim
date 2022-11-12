@@ -25,8 +25,10 @@ endif
 
 " Commands {{{ "
 command! -bang -nargs=? -complete=custom,gtest#CompleteTestFilter GTest call gtest#Run(<bang>0, <f-args>)
+command! GTestRunThis call gtest#RunThis()
 " }}} Commands "
 
 " Mappings {{{
 nnoremap <silent> <Plug>(GTest) :call gtestvim#Run(0)<CR>
+nnoremap <silent> <Plug>(GTestRunThis) :call gtestvim#RunThis()<CR>
 " }}} Mappings
