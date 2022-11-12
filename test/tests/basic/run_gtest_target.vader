@@ -106,8 +106,9 @@ Execute ([Run GTest Target] Run gtest executable with filter and filter from cmd
     let g:gtest_test_filter = '*TestMethodF1'
     silent GTest --gtest_filter=*TestMethodF2
     silent copen
-    Assert w:quickfix_title =~# '--gtest_filter=\*TestMethodF1', 'Assert ' . w:quickfix_title
+    Assert w:quickfix_title !~# '--gtest_filter=\*TestMethodF1', 'Assert ' . w:quickfix_title
     Assert w:quickfix_title =~# '--gtest_filter=\*TestMethodF2', 'Assert ' . w:quickfix_title
+    AssertEqual g:gtest_test_filter, '*TestMethodF2'
     silent cclose
 
 Execute ([Run GTest Target] Run gtest executable with bang filter from cmd):

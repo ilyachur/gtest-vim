@@ -1,0 +1,38 @@
+Before:
+    silent call OpenTestProject()
+    silent call ResetPluginOptions()
+    " Use on in order to close all windows and avoid E36 error
+    silent on
+
+Execute ([Get tests list] Get all tests):
+    CMake -DENABLE_TESTS=ON
+    Assert filereadable("cmake-build-Release/CMakeCache.txt"), "CMakeCache.txt should be generated"
+    silent CMakeBuild
+    " Windows is disabled now
+    if !has('win32')
+        Assert filereadable("cmake-build-Release/tests/unit_tests"), "unit_tests should be built"
+        Assert filereadable("cmake-build-Release/lib/libtest_lib.a"), "test_lib should be built"
+        let g:gtest_executable = 'cmake-build-Release/tests/unit_tests'
+    else
+        Assert filereadable("cmake-build-Release/tests/Debug/unit_tests.exe"), "unit_tests should be built"
+        Assert filereadable("cmake-build-Release/lib/Debug/test_lib.lib"), "test_lib should be built"
+        let g:gtest_executable = 'cmake-build-Release/tests/Debug/unit_tests.exe'
+    endif
+    let test_cases = gtest#GetAllTests()
+    AssertEqual test_cases, ['*', 'TestClassTests.*', 'TestClassTests.TestMethodF1', 'TestClassTests.TestMethodF2']
+
+Execute ([Get tests list] Complete tests):
+    CMake -DENABLE_TESTS=ON
+    Assert filereadable("cmake-build-Release/CMakeCache.txt"), "CMakeCache.txt should be generated"
+    silent CMakeBuild unit_tests
+    " Windows is disabled now
+    if !has('win32')
+        Assert filereadable("cmake-build-Release/tests/unit_tests"), "unit_tests should be built"
+        Assert filereadable("cmake-build-Release/lib/libtest_lib.a"), "test_lib should be built"
+    else
+        Assert filereadable("cmake-build-Release/tests/Debug/unit_tests.exe"), "unit_tests should be built"
+        Assert filereadable("cmake-build-Release/lib/Debug/test_lib.lib"), "test_lib should be built"
+    endif
+    let test_cases = split(gtest#CompleteTestFilter(0, 0, 0), "\n")
+    AssertEqual len(test_cases), 4
+    AssertEqual test_cases, ['--gtest_filter=*', '--gtest_filter=TestClassTests.*', '--gtest_filter=TestClassTests.TestMethodF1', '--gtest_filter=TestClassTests.TestMethodF2']
