@@ -24,7 +24,7 @@ endif
 " }}} Options "
 
 " Commands {{{ "
-command! -bang -nargs=?  GTest call gtest#Run(<bang>0, <f-args>)
+command! -bang -nargs=? -complete=custom,gtest#CompleteTestFilter GTest call gtest#Run(<bang>0, <f-args>)
 " }}} Commands "
 
 " Mappings {{{
