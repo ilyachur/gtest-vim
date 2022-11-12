@@ -1,0 +1,28 @@
+*gtest-vim.txt* gtest integration for Vim
+
+Authors:    Ilya Churaev <https://github.com/ilyachur>
+Licence:    MIT
+
+INTRODUCTION                                                          *gtest-vim*
+
+This plugin provides gtest integration to Vim/Neovim.
+The plugin depends on cmake4vim what allows to use information from cmake
+target in order to switch between different gtest executables.
+
+COMMANDS                                                    *gtest-vim-commands*
+
+:GTest[{Args}]                                                          *:GTest*
+    Runs gtest executable. Information from CMake target is used for
+    cmake projects, in other case the path to gtest executable should
+    be defined by `g:gtest_executable` variable.
+
+:GTestRunThis                                                    *:GTestRunThis*
+    Runs gtest test case under the cursor.
+
+VARIABLES                                                      *cmake-variables*
+
+*g:gtest_executable*                The path to gtest executable. Default is empty.
+
+*g:gtest_test_filter*               The filter for gtest. Default is empty.
+
+ vim: tw=79 ts=8 sw=4 sts=4 et ft=help
