@@ -5,7 +5,7 @@ let s:common_gtest_matcher = '\C^\s*\(\<\S*TEST\S*\>\)\s*(\s*\(\<\S*\>\)\s*,\s*\
 let s:typed_test_suite_matcher = '\C^\s*\(\<TYPED_TEST_SUITE\>\)\s*(\s*\(\<\S*\>\).*).*$'
 let s:find_gtest_pattern = '\C^\s*\(\<\S*TEST\S*\>\).*$'
 
-function! s:check_empty(list, size)
+function! s:check_empty(list, size) abort
     let l:i = 0
     for l:elem in a:list
         if l:i > a:size
