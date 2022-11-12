@@ -13,6 +13,7 @@ function! gtest#Run(bang, ...) abort
             let l:args += a:000
             let l:args = [a:bang] + l:args
             call call('cmake4vim#RunTarget', l:args)
+            return
         endif
     endif
 
@@ -20,6 +21,7 @@ function! gtest#Run(bang, ...) abort
         let l:conf = { g:gtest_executable : { 'app': g:gtest_executable, 'args': l:args } }
         call utils#common#executeCommand(join([utils#fs#fnameescape(g:gtest_executable)] + l:args), 1)
         call utils#config#vimspector#updateConfig(l:conf)
+        return
     endif
 
     call utils#common#Warning('Please select gtest executable first!')
