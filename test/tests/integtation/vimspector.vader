@@ -1,0 +1,50 @@
+Before:
+    silent call OpenTestProject()
+
+    silent call ResetPluginOptions()
+    let g:cmake_vimspector_support = 1
+    " Use on in order to close all windows and avoid E36 error
+    silent on
+
+After:
+    silent call RemoveFile(".vimspector.json")
+
+Execute ([Vimspector] Run unit_tests target and change vimspector config with cmake):
+        silent CMake -DENABLE_TESTS=ON
+        silent CMakeBuild unit_tests
+        Assert !filereadable(".vimspector.json"), "Vimspector config should not be generated"
+        silent GTest --gtest_filter=*TestMethodF2
+        Assert filereadable(".vimspector.json"), "Vimspector config should be generated"
+        let config = utils#config#vimspector#updateConfig({})
+        Assert has_key(config, 'configurations'), "Config should have configurations"
+        Assert has_key(config['configurations'], 'unit_tests'), "Config should have unit_tests"
+        Assert has_key(config['configurations']['unit_tests'], 'configuration'), "unit_tests should have configuration"
+        Assert has_key(config['configurations']['unit_tests']['configuration'], 'args'), "unit_tests configuration should have args"
+        AssertEqual len(config['configurations']['unit_tests']['configuration']['args']), 1
+        AssertEqual config['configurations']['unit_tests']['configuration']['args'], ['--gtest_filter=*TestMethodF2']
+
+Execute ([Vimspector] Run unit_tests target and change vimspector config without cmake):
+        silent CMake -DENABLE_TESTS=ON
+        silent CMakeBuild
+        " Windows is disabled now
+        if !has('win32')
+            Assert filereadable("cmake-build-Release/app/test_app"), "app should be built"
+            Assert filereadable("cmake-build-Release/tests/unit_tests"), "unit_tests should be built"
+            Assert filereadable("cmake-build-Release/lib/libtest_lib.a"), "test_lib should be built"
+            let g:gtest_executable = 'cmake-build-Release/tests/unit_tests'
+        else
+            Assert filereadable("cmake-build-Release/app/Debug/test_app.exe"), "app should be built"
+            Assert filereadable("cmake-build-Release/tests/Debug/unit_tests.exe"), "unit_tests should be built"
+            Assert filereadable("cmake-build-Release/lib/Debug/test_lib.lib"), "test_lib should be built"
+            let g:gtest_executable = 'cmake-build-Release/tests/Debug/unit_tests.exe'
+        endif
+        Assert !filereadable(".vimspector.json"), "Vimspector config should not be generated"
+        silent GTest --gtest_filter=*TestMethodF1
+        Assert filereadable(".vimspector.json"), "Vimspector config should be generated"
+        let config = utils#config#vimspector#updateConfig({})
+        Assert has_key(config, 'configurations'), "Config should have configurations"
+        Assert has_key(config['configurations'], g:gtest_executable), "Config should have unit_tests"
+        Assert has_key(config['configurations'][g:gtest_executable], 'configuration'), "unit_tests should have configuration"
+        Assert has_key(config['configurations'][g:gtest_executable]['configuration'], 'args'), "unit_tests configuration should have args"
+        AssertEqual len(config['configurations'][g:gtest_executable]['configuration']['args']), 1
+        AssertEqual config['configurations'][g:gtest_executable]['configuration']['args'], ['--gtest_filter=*TestMethodF1']
