@@ -25,6 +25,17 @@ function! s:getListTests() abort
     " Get list tests and remove the first line
     return substitute(system(utils#fs#fnameescape(l:gtest_executable) . ' --gtest_list_tests'), '\v^Running.{-}\n(.*)', '\1', '')
 endfunction
+
+function! s:combineLists(arg1, arg2) abort
+    let l:result = []
+    let l:result += a:arg1
+    for l:elem in a:arg2
+        if !index(l:result, l:elem)
+            call add(l:result, l:elem)
+        endif
+    endfor
+    return l:result
+endfunction
 " }}} Private functions "
 
 " Public functions {{{ "
@@ -36,17 +47,23 @@ function! gtest#Run(bang, ...) abort
         return
     endif
     let l:args = []
-    let l:args += a:000
-    for l:elem in l:args
-        let l:gtest_filter = substitute(l:elem, '\v^--gtest_filter\=(.*)', '\1', '')
-        if !empty(l:gtest_filter)
-            let g:gtest_test_filter = l:gtest_filter
-            let l:has_gtest_filter = 1
+    if !a:bang && !empty(g:gtest_usr_args)
+        if type(g:gtest_usr_args) == v:t_list
+            let l:args += g:gtest_usr_args
+        else
+            let l:args += [g:gtest_usr_args]
         endif
-    endfor
-    if !a:bang && !empty(g:gtest_test_filter) && !exists('l:has_gtest_filter')
-        let l:args += [printf('--gtest_filter=%s', g:gtest_test_filter)]
     endif
+    if empty(a:000)
+        " Restore arguments from vimspector if supported
+        let l:old_conf = utils#config#vimspector#getTargetConfig(g:cmake_build_target)
+        if !a:bang && !empty(l:old_conf['args'])
+            let l:args = s:combineLists(l:args, l:old_conf['args'])
+        endif
+    else
+        let l:args += a:000
+    endif
+
     if l:is_cmake
         let l:args = [a:bang] + l:args
         silent call call('cmake4vim#RunTarget', l:args)
@@ -64,8 +81,7 @@ function! gtest#RunThis() abort
     endif
     let l:gtest_filter = utils#gtest#getGTestFilterFromLine(getline('.'))
     if !empty(l:gtest_filter)
-        let g:gtest_test_filter = l:gtest_filter
-        call gtest#Run(0)
+        call gtest#Run(0, printf('--gtest_filter=%s', l:gtest_filter))
     endif
 endfunction
 

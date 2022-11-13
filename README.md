@@ -27,6 +27,7 @@ The current version of the plugin supports next commands:
 ### Basic
 
 - **`:GTest`** runs gtest executable. Information from CMake target is used for cmake projects, in other case the path to gtest executable should be defined by `g:gtest_executable` variable.
+- **`:GTest!`** runs gtest executable, but ignore arguments from **`g:gtest_usr_args`**.
 - **`:GTestRunThis`** runs gtest test case under the cursor.
 
 
@@ -42,7 +43,7 @@ The current version of the plugin supports next commands:
 Plugin supports special global variables which are allow to change behaviour of commands (you can change them in your **.vimrc**):
 
 - **`g:gtest_executable`** the path to gtest executable. Default is empty, in case of using gtest with cmake project this variable isn't used.
-- **`g:gtest_test_filter`** is the filter for gtest. Default is empty.
+- **`g:gtest_usr_args`** allows to specify user arguments for gtest.
 
 ## Variables from [cmake4vim](https://github.com/ilyachur/cmake4vim) plugin
 
