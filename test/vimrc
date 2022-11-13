@@ -33,7 +33,7 @@ function! OpenTestProject()
 endfunction
 
 function! ResetPluginOptions()
-    let g:gtest_test_filter = ''
+    let g:gtest_usr_args = ''
     let g:gtest_executable = ''
 
     let g:cmake_build_target = ''

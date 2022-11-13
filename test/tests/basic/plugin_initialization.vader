@@ -6,5 +6,5 @@ Before:
 After:
 
 Execute ([Plugin Initialization] Check default options):
-    AssertEqual g:gtest_test_filter, ''
+    AssertEqual g:gtest_usr_args, ''
     AssertEqual g:gtest_executable, ''

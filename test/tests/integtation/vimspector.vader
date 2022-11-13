@@ -1,6 +1,6 @@
 Before:
     silent call OpenTestProject()
-
+    silent call RemoveFile(".vimspector.json")
     silent call ResetPluginOptions()
     let g:cmake_vimspector_support = 1
     " Use on in order to close all windows and avoid E36 error
@@ -22,6 +22,14 @@ Execute ([Vimspector] Run unit_tests target and change vimspector config with cm
         Assert has_key(config['configurations']['unit_tests']['configuration'], 'args'), "unit_tests configuration should have args"
         AssertEqual len(config['configurations']['unit_tests']['configuration']['args']), 1
         AssertEqual config['configurations']['unit_tests']['configuration']['args'], ['--gtest_filter=*TestMethodF2']
+        silent GTest
+        silent copen
+        Assert w:quickfix_title =~# '--gtest_filter=\*TestMethodF2', 'Assert ' . w:quickfix_title
+        silent cclose
+        silent GTest!
+        silent copen
+        Assert w:quickfix_title !~# '--gtest_filter=\*TestMethodF2', 'Assert ' . w:quickfix_title
+        silent cclose
 
 Execute ([Vimspector] Run unit_tests target and change vimspector config without cmake):
         silent CMake -DENABLE_TESTS=ON
@@ -48,3 +56,11 @@ Execute ([Vimspector] Run unit_tests target and change vimspector config without
         Assert has_key(config['configurations'][g:gtest_executable]['configuration'], 'args'), "unit_tests configuration should have args"
         AssertEqual len(config['configurations'][g:gtest_executable]['configuration']['args']), 1
         AssertEqual config['configurations'][g:gtest_executable]['configuration']['args'], ['--gtest_filter=*TestMethodF1']
+        silent GTest
+        silent copen
+        Assert w:quickfix_title =~# '--gtest_filter=\*TestMethodF1', 'Assert copen 1: ' . w:quickfix_title
+        silent cclose
+        silent GTest!
+        silent copen
+        Assert w:quickfix_title !~# '--gtest_filter=\*TestMethodF1', 'Assert copen 2: ' . w:quickfix_title
+        silent cclose
