@@ -13,14 +13,10 @@ let g:loaded_gtest_vim_plugin = 1
 " }}} Initialization "
 
 " Options {{{ "
-if !exists('g:gtest_test_filter')
-    let g:gtest_test_filter = ''
-endif
-
 " Gtest executable, for cmake project is not needed
-if !exists('g:gtest_executable')
-    let g:gtest_executable = ''
-endif
+let g:gtest_executable = get(g:, 'gtest_executable', '')
+" Option allows to specify gtest arguments
+let g:gtest_usr_args =   get(g:, 'gtest_usr_args',   '')
 " }}} Options "
 
 " Commands {{{ "

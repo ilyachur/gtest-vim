@@ -23,6 +23,6 @@ VARIABLES                                                      *cmake-variables*
 
 *g:gtest_executable*                The path to gtest executable. Default is empty.
 
-*g:gtest_test_filter*               The filter for gtest. Default is empty.
+*g:gtest_test_filter*               Allows to specify user arguments. Default is empty.
 
  vim: tw=79 ts=8 sw=4 sts=4 et ft=help
