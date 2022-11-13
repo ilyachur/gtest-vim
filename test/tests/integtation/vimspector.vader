@@ -34,7 +34,6 @@ Execute ([Vimspector] Run unit_tests target and change vimspector config with cm
 Execute ([Vimspector] Run unit_tests target and change vimspector config without cmake):
         silent CMake -DENABLE_TESTS=ON
         silent CMakeBuild
-        " Windows is disabled now
         if !has('win32')
             Assert filereadable("cmake-build-Release/app/test_app"), "app should be built"
             Assert filereadable("cmake-build-Release/tests/unit_tests"), "unit_tests should be built"
