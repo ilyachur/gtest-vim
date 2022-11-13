@@ -19,7 +19,7 @@ Execute ([Run GTest Target] Detect gtest executable):
         Assert filereadable("cmake-build-Release/tests/Debug/unit_tests.exe"), "unit_tests should be built"
         Assert filereadable("cmake-build-Release/lib/Debug/test_lib.lib"), "test_lib should be built"
         Assert !utils#gtest#isGTestExecutable("cmake-build-Release/app/Debug/test_app.exe"), "test_app cannot be gtest executable"
-        Assert utils#gtest#isGTestExecutable("cmake-build-Release/app/Debug/unit_tests.exe"), system('cmake-build-Release/app/Debug/unit_tests.exe --help')
+        Assert utils#gtest#isGTestExecutable("cmake-build-Release/tests/Debug/unit_tests.exe"), "unit_tests must be gtest executable"
     endif
 
 Execute ([Run GTest Target] Run gtest executable without cmake target):
