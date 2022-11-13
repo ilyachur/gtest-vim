@@ -26,7 +26,6 @@ Execute ([Run GTest Target] Run gtest executable without cmake target):
     CMake -DENABLE_TESTS=ON
     Assert filereadable("cmake-build-Release/CMakeCache.txt"), "CMakeCache.txt should be generated"
     silent CMakeBuild
-    " Windows is disabled now
     if !has('win32')
         Assert filereadable("cmake-build-Release/app/test_app"), "app should be built"
         Assert filereadable("cmake-build-Release/tests/unit_tests"), "unit_tests should be built"

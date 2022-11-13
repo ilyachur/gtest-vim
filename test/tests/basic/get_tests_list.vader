@@ -8,7 +8,6 @@ Execute ([Get tests list] Get all tests):
     CMake -DENABLE_TESTS=ON
     Assert filereadable("cmake-build-Release/CMakeCache.txt"), "CMakeCache.txt should be generated"
     silent CMakeBuild
-    " Windows is disabled now
     if !has('win32')
         Assert filereadable("cmake-build-Release/tests/unit_tests"), "unit_tests should be built"
         Assert filereadable("cmake-build-Release/lib/libtest_lib.a"), "test_lib should be built"
@@ -25,7 +24,6 @@ Execute ([Get tests list] Complete tests):
     CMake -DENABLE_TESTS=ON
     Assert filereadable("cmake-build-Release/CMakeCache.txt"), "CMakeCache.txt should be generated"
     silent CMakeBuild unit_tests
-    " Windows is disabled now
     if !has('win32')
         Assert filereadable("cmake-build-Release/tests/unit_tests"), "unit_tests should be built"
         Assert filereadable("cmake-build-Release/lib/libtest_lib.a"), "test_lib should be built"
