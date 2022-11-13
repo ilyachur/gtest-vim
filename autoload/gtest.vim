@@ -30,7 +30,7 @@ function! s:combineLists(arg1, arg2) abort
     let l:result = []
     let l:result += a:arg1
     for l:elem in a:arg2
-        if !index(l:result, l:elem)
+        if index(l:result, l:elem) < 0
             call add(l:result, l:elem)
         endif
     endfor
@@ -56,7 +56,10 @@ function! gtest#Run(bang, ...) abort
     endif
     if empty(a:000)
         " Restore arguments from vimspector if supported
-        let l:old_conf = utils#config#vimspector#getTargetConfig(g:cmake_build_target)
+        if l:is_cmake
+            let l:gtest_executable = g:cmake_build_target
+        endif
+        let l:old_conf = utils#config#vimspector#getTargetConfig(l:gtest_executable)
         if !a:bang && !empty(l:old_conf['args'])
             let l:args = s:combineLists(l:args, l:old_conf['args'])
         endif
